@@ -1,12 +1,12 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#1f4d3a">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-192.png">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+<meta name="theme-color" content="#1f4d3a" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="icon-192.png" />
 <title>大兴安岭旅行助理</title>
 <style>
 :root{--bg:#0e1f19;--card:#16302a;--card2:#1b3a32;--ink:#e8e4d8;--mut:#9db3a8;--amber:#e07b1a;--amber2:#f0a050;--ok:#57b380;--line:#26463c;--red:#e07b5a}
@@ -110,6 +110,7 @@ h2.sec{font-size:14px;color:var(--mut);margin:18px 14px 4px;letter-spacing:2px}
 </div>
 
 <script>
+//<![CDATA[
 /* ============ 行程数据（全部内嵌，离线可用） ============ */
 const TRIP_START="2026-09-24", TRIP_END="2026-10-05";
 const DAYS=[
@@ -348,7 +349,7 @@ function nodeTap(i){
   const n=NODES[i];const p=document.getElementById("mapinfo");p.style.display="block";
   const day=DAYS.find(d=>(d.t+n.n).length&&d.stay.indexOf(n.n)>-1)||DAYS.find(d=>JSON.stringify(d.items).indexOf(n.n)>-1);
   let food=day?day.food:"",cul=day?day.cul:"";
-  p.innerHTML=`<b style="color:#f0a050">${n.n}</b> <span class="sub">（${n.day}）</span><br>${cul?cul+"<br>":""}${food?"🍽️ "+food:""}
+  p.innerHTML=`<b style="color:#f0a050">${n.n}</b> <span class="sub">（${n.day}）</span><br />${cul?cul+"<br />":""}${food?"🍽️ "+food:""}
    <div style="margin-top:6px"><a class="btn" href="${amapNav(n.n)}" target="_blank">🧭 高德导航</a>
    <a class="btn ghost" href="${bing(n.n+" 美食 民俗")}" target="_blank">🔎 联网检索</a></div>`;
 }
@@ -392,7 +393,7 @@ document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",
 }));
 function tick(){document.getElementById("clock").textContent=new Date().toTimeString().slice(0,5)}
 setInterval(tick,30000);tick();
-renderAll();geoCard();
-</script>
+renderAll();geoCard();try{if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js')}}catch(e){}
+//]]></script>
 </body>
 </html>

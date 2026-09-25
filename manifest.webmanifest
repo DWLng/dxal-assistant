@@ -2,14 +2,22 @@
   "name": "大兴安岭旅行助理",
   "short_name": "旅行助理",
   "description": "大兴安岭全环线自驾10日：行程、导航、夜宿、星空与人文",
-  "start_url": "./index.html",
+  "start_url": "./index.xhtml",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0e1f19",
   "theme_color": "#1f4d3a",
   "icons": [
-    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
-    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
   ]
 }
