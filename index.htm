@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#1f4d3a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>大兴安岭旅行助理</title>
+<style>
+:root{--bg:#0e1f19;--card:#16302a;--card2:#1b3a32;--ink:#e8e4d8;--mut:#9db3a8;--amber:#e07b1a;--amber2:#f0a050;--ok:#57b380;--line:#26463c;--red:#e07b5a}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:-apple-system,"PingFang SC",sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6}
+#app{max-width:560px;margin:0 auto;min-height:100%;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+.topbar{position:sticky;top:0;z-index:50;background:linear-gradient(135deg,#173d2e,#1f4d3a);padding:calc(10px + env(safe-area-inset-top)) 16px 10px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 12px rgba(0,0,0,.4)}
+.topbar .t{font-size:17px;font-weight:700;color:#f5efe0;flex:1}
+.topbar .d{font-size:12px;color:#9db3a8}
+.card{background:var(--card);border-radius:14px;margin:12px 14px;padding:14px 16px;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.card h3{font-size:15px;color:#f0a050;margin-bottom:8px}
+.row{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line)}
+.row:last-child{border-bottom:none}
+.row.done .nm{text-decoration:line-through;color:var(--mut)}
+.chk{flex:0 0 auto;width:22px;height:22px;border:2px solid var(--amber2);border-radius:7px;margin-top:3px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#0e1f19;font-weight:700}
+.chk.on{background:var(--amber2)}
+.nm{flex:1}
+.nm b{color:#f5efe0}
+.nm .note{display:block;font-size:12.5px;color:var(--mut);margin-top:2px}
+.t{flex:0 0 auto;font-variant-numeric:tabular-nums;color:#f0a050;font-size:13.5px;margin-top:3px;width:44px;text-align:right}
+.big{font-size:19px;font-weight:700;color:#f5efe0;line-height:1.5}
+.big .hl{color:#f0a050}
+.sub{font-size:12.5px;color:var(--mut)}
+.pill{display:inline-block;background:rgba(240,160,80,.15);color:#f0a050;border-radius:999px;padding:2px 10px;font-size:12px;margin:2px 4px 2px 0}
+.pill.g{background:rgba(87,179,128,.15);color:#57b380}
+.pill.b{background:rgba(120,160,220,.15);color:#8fb0e0}
+.btn{display:inline-block;background:var(--amber2);color:#1b1005;border-radius:10px;padding:8px 14px;font-size:13.5px;font-weight:600;text-decoration:none;margin:4px 6px 0 0;border:none}
+.btn.ghost{background:transparent;border:1px solid var(--amber2);color:#f0a050}
+.btn.gray{background:#26463c;color:#cfe0d5;border:none}
+.alert{background:rgba(224,123,26,.12);border-left:3px solid var(--amber2);border-radius:8px;padding:9px 12px;margin:8px 0;font-size:13.5px}
+.alert.red{border-left-color:var(--red);background:rgba(224,123,90,.1)}
+.alert.ok{border-left-color:var(--ok);background:rgba(87,179,128,.1)}
+.tabs{position:fixed;bottom:0;left:0;right:0;z-index:60;background:#122a22;display:flex;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -2px 12px rgba(0,0,0,.4)}
+.tabs button{flex:1;background:none;border:none;color:var(--mut);font-size:11px;padding:8px 0 8px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:inherit}
+.tabs button .ic{font-size:20px;line-height:1}
+.tabs button.on{color:#f0a050;font-weight:600}
+.page{display:none}
+.page.on{display:block}
+.kv{display:flex;gap:8px;padding:6px 0;font-size:13.5px;border-bottom:1px dashed var(--line)}
+.kv:last-child{border:none}
+.kv .k{flex:0 0 74px;color:var(--mut)}
+.prog{background:#26463c;border-radius:999px;height:10px;overflow:hidden;margin:8px 0}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--amber2),var(--amber));border-radius:999px}
+svg text{font-family:inherit}
+svg .node-hit{cursor:pointer}
+.info{background:var(--card2);border-radius:12px;padding:12px;margin-top:10px;font-size:13.5px}
+.hidden{display:none!important}
+h2.sec{font-size:14px;color:var(--mut);margin:18px 14px 4px;letter-spacing:2px}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="topbar"><div class="t">🌲 大兴安岭旅行助理</div><div class="d" id="clock">--:--</div></div>
+
+<div class="page on" id="page-today">
+  <div class="card" id="nowcard"></div>
+  <div id="alerts"></div>
+  <div class="card" id="todaycard"></div>
+  <div class="card" id="foodcard"></div>
+  <div class="card" id="culturecard"></div>
+  <div class="card"><h3>⚡ 快捷动作</h3><div id="quick"></div></div>
+</div>
+
+<div class="page" id="page-plan"><div class="card"><h3>总进度画板</h3><div id="progall"></div><div class="sub">点任意条目前的小方框即可标记完成，地图与进度会同步更新。</div></div><div id="alldays"></div></div>
+
+<div class="page" id="page-map">
+  <div class="card"><h3>环线地图（橙圈=夜宿点）</h3>
+  <svg id="mapsvg" viewBox="30 15 850 760" style="width:100%;height:auto" role="img">
+  <rect x="30" y="15" width="850" height="760" fill="#122a22" rx="14"/>
+  <path d="M250,300 C225,270 235,235 258,205 C275,182 300,175 320,160" stroke="#3d6a5c" stroke-width="7" fill="none" opacity=".6" stroke-linecap="round"/>
+  <path d="M455,90 C500,55 545,45 585,62 M585,62 C640,80 668,120 690,160" stroke="#3d6a5c" stroke-width="7" fill="none" opacity=".6" stroke-linecap="round"/>
+  <text x="205" y="255" font-size="13" fill="#6b9a8c" writing-mode="tb" letter-spacing="4">额尔古纳河</text>
+  <text x="598" y="46" font-size="13" fill="#6b9a8c">黑龙江</text>
+  <path class="leg" d="M594,572 L499,520 L262,423 L264,408 L295,341 L260,316 L240,304 L282,266 L402,298 L362,254 L447,195 L483,122 L468,82 L542,76 L568,70 L483,122 L657,174 L610,326 Z" fill="none" stroke="#57b380" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
+  <path d="M594,572 L632,584" stroke="#f0a050" stroke-width="2.6" stroke-dasharray="2 5" fill="none"/>
+  <path d="M594,572 C660,640 740,680 802,696" stroke="#8a9498" stroke-width="2.6" stroke-dasharray="7 6" fill="none"/>
+  <g font-size="15" id="mnodes"></g>
+  <g font-size="13" fill="#7c9a8d">
+    <text x="500" y="556">350km</text><text x="640" y="452" transform="rotate(58)">G111·460km</text>
+    <text x="520" y="230">塔河→漠河210km</text><text x="330" y="290">莫尔道嘎→根河140km</text>
+  </g>
+  </svg>
+  <div id="mapinfo" class="info" style="display:none"></div>
+  <div class="sub" style="margin-top:8px">🟠 橙圈=夜宿点 · 点任意节点查看详情与导航 · 实心=已走过</div>
+  </div>
+</div>
+
+<div class="page" id="page-list">
+  <div class="card"><h3>🎒 必备装备（忘带的都列在这）</h3><ul id="gear" style="list-style:none;padding:0"></ul></div>
+  <div class="card"><h3>📄 证件四件</h3><ul id="docs" style="list-style:none;padding:0"></ul></div>
+  <div class="card"><h3>🌙 选配好物</h3><ul id="opts" style="list-style:none;padding:0"></ul></div>
+</div>
+</div>
+
+<div class="tabs">
+<button class="on" data-p="page-today"><span class="ic">🧭</span>今日</button>
+<button data-p="page-plan"><span class="ic">✅</span>行程</button>
+<button data-p="page-map"><span class="ic">🗺️</span>地图</button>
+<button data-p="page-list"><span class="ic">🎒</span>清单</button>
+</div>
+
+<script>
+/* ============ 行程数据（全部内嵌，离线可用） ============ */
+const TRIP_START="2026-09-24", TRIP_END="2026-10-05";
+const DAYS=[
+{d:"9/24",date:"2026-09-24",t:"D0 · 杭州→哈尔滨",stay:"哈尔滨·中央大街",sun:"06:15",set:"17:05",wake:"自然醒",
+ items:[{t:"午后",n:"航班 杭州→哈尔滨",note:"夜逛中央大街/索菲亚教堂夜景"}],
+ food:"老昌春饼、马迭尔冰棍、锅包肉",cul:"中央大街：1900年代中东铁路时期的面包石街道，两侧71栋欧式建筑，被称为“建筑艺术博物馆”。"},
+{d:"9/25",date:"2026-09-25",t:"D1 · 哈尔滨→齐齐哈尔→扎兰屯",stay:"扎兰屯·雅鲁河畔（扎兰屯宾馆）",sun:"06:00",set:"17:50",wake:"06:15",
+ items:[{t:"07:04",n:"D6913 哈尔滨→齐齐哈尔08:47（二等座）",note:"出站即到取车点；到站后先验车录像"},
+        {t:"10:00",n:"齐齐哈尔火车站取车",note:"绕车录像+油量拍照+试暖风"},
+        {t:"10:30",n:"G10东行（服务区午餐）",note:""},
+        {t:"15:30",n:"扎兰屯：吊桥公园+中东铁路博物馆",note:"免费；1905年百年园林与机车库"},
+        {t:"18:30",n:"中秋夜：雅鲁河畔赏月",note:"月出约18:30"}],
+ food:"午餐服务区或阿荣旗；晚餐扎兰屯本地馆",cul:"扎兰屯是中东铁路的疗养重镇，俄式石头房子成片；吊桥公园建于1905年，是横跨雅鲁河的百年园林。"},
+{d:"9/26",date:"2026-09-26",t:"D2 · 扎兰屯→海拉尔→莫日格勒河",stay:"草原蒙古包★（备选额尔古纳市区）",sun:"06:05",set:"17:45",wake:"自然醒",
+ items:[{t:"08:30",n:"出发→海拉尔",note:"午餐诺敏塔拉锅茶手把肉"},
+        {t:"13:30",n:"金帐汗/莫日格勒河观景台",note:"天下第一曲水，免费"},
+        {t:"16:30",n:"入住草原蒙古包",note:"日落17:45前安顿"},
+        {t:"夜里",n:"银河星空+篝火烤羊腿（视营地）",note:"夜温-2~2℃"}],
+ food:"海拉尔诺敏塔拉锅茶手把肉；蒙古包烤羊腿",cul:"金帐汗之名源自成吉思汗的行帐“金帐”；莫日格勒河在草原上拐出上百道弯，被称为天下第一曲水。"},
+{d:"9/27",date:"2026-09-27",t:"D3 · 草原日出→额尔古纳→恩和→临江",stay:"临江屯木刻楞（界河景房）",sun:"06:08",set:"17:38",wake:"05:15",
+ items:[{t:"06:05",n:"草原日出（蒙古包门口）",note:"★★"},
+        {t:"08:30",n:"额尔古纳湿地晨景",note:"亚洲第一湿地"},
+        {t:"11:00",n:"白桦林景区",note:"金色隧道"},
+        {t:"12:30",n:"恩和午餐+俄罗斯族民俗馆",note:"列巴红菜汤"},
+        {t:"15:00",n:"哈乌尔河→室韦口岸",note:""},
+        {t:"17:30",n:"临江屯界河日落",note:"★对岸俄罗斯村庄灯火"}],
+ food:"恩和列巴红菜汤（热尼亚/柳芭之家）；室韦奶酪包",cul:"恩和、室韦、临江是中国俄罗斯族最集中的村落，木刻楞房子是俄式原木民居；先辈多为闯关东与俄罗斯通婚的后裔。"},
+{d:"9/28",date:"2026-09-28",t:"D4 · 临江晨雾→老鹰嘴→太平→莫尔道嘎",stay:"莫尔道嘎镇（进阶：白鹿岛）",sun:"06:12",set:"17:31",wake:"05:30",
+ items:[{t:"05:30",n:"临江后山日出晨雾★★★",note:"日出前40分钟上山"},
+        {t:"09:30",n:"老鹰嘴",note:"河湾巨石"},
+        {t:"10:30",n:"太平百年俄乡",note:"砂石段慢行"},
+        {t:"12:30",n:"莫尔道嘎午餐",note:"铁锅炖大鹅"},
+        {t:"14:00",n:"莫尔道嘎森林公园（小火车）",note:"自驾套票；白鹿岛Ω湾"}],
+ food:"莫尔道嘎铁锅炖大鹅+粘豆包（胡老大）",cul:"莫尔道嘎是鄂伦春语“骏马出征”之意；这里的森林小火车是当年森工运材铁路改造的旅游线。"},
+{d:"9/29",date:"2026-09-29",t:"D5 · 莫尔道嘎→敖鲁古雅→根河",stay:"根河市区",sun:"06:11",set:"17:28",wake:"自然醒",
+ items:[{t:"09:30",n:"S301金色走廊→敖鲁古雅",note:"经得耳布尔"},
+        {t:"13:00",n:"使鹿部落喂驯鹿+驯鹿文化博物馆",note:"门票含互动；苔藓另购"},
+        {t:"16:30",n:"根河国家湿地公园随拍",note:""},
+        {t:"18:00",n:"根河市区晚餐",note:"涮肚/铁锅炖"}],
+ food:"根河涮肚、铁锅炖",cul:"敖鲁古雅的使鹿鄂温克人是国内唯一饲养驯鹿的民族，300年前从列拿河畔迁来；根河测评出-58℃的全国极端最低温，是“中国冷极”。"},
+{d:"9/30",date:"2026-09-30",t:"D6 · 根河→金河→满归→漠河市区（最长日）",stay:"漠河市区",sun:"06:08",set:"17:28",wake:"06:30",
+ items:[{t:"07:30",n:"出发（最迟7:30！）",note:"全程最长日400km"},
+        {t:"08:10",n:"金河：中国冷极村/冷极点碑路边打卡",note:""},
+        {t:"10:30",n:"满归：只加油不停留",note:"见站加满"},
+        {t:"11:30",n:"出内蒙古→黑龙江（防火检查站登记）",note:"70-80km无信号"},
+        {t:"16:30",n:"漠河市区，小城观星",note:"日落17:28"}],
+ food:"满归加油站简餐或自带自热食品；漠河晚餐正餐",cul:"今天穿行的区域是大兴安岭腹地，1987年“5·6大火”后重建的林区；沿途全是森工城镇，路边堆场还能看到原木。"},
+{d:"10/1",date:"2026-10-01",t:"D7 · 九曲晨雾→北极村→北红村（找北大日）",stay:"北红村火炕★",sun:"05:50",set:"17:30",wake:"05:30",
+ items:[{t:"06:00",n:"九曲十八弯日出晨雾★★★",note:"城南15km，观景台俯瞰雾海"},
+        {t:"08:00",n:"回城早膳+退房（富余可走胭脂沟/李金镛祠堂）",note:"采金文化支线"},
+        {t:"10:00",n:"北极村找北体系（最北邮局/金鸡之冠/北极沙洲）",note:"门票团购常便宜；私家车不进村换观光车30"},
+        {t:"15:30",n:"北红村（免票）",note:""},
+        {t:"夜里",n:"肉眼银河+火炕夜话",note:"无路灯，出门30米即星空"}],
+ food:"北极村简餐；北红村酸菜白肉（牛姐农家院）",cul:"北极村是中国最北的行政村落，找北体系里的“最北”们都是官方认证的地理坐标；北红村比北极村更原始，是真正的地理最北村落。"},
+{d:"10/2",date:"2026-10-02",t:"D8 · 北红村→龙江第一湾→塔河",stay:"塔河县城（休整夜）",sun:"05:55",set:"17:22",wake:"05:45",
+ items:[{t:"07:00",n:"北红村炊烟晨雾+早餐",note:""},
+        {t:"09:00",n:"龙江第一湾+乌苏里浅滩",note:"门票+观光车；千级台阶看Ω湾"},
+        {t:"11:30",n:"南下塔河",note:"G111"},
+        {t:"17:30",n:"塔河县城休整",note:"洗衣+好好吃一顿"}],
+ food:"塔河县城东北菜",cul:"龙江第一湾是黑龙江在漠江段冲出的Ω形大湾，对岸就是俄罗斯阿穆尔州；乌苏里浅滩立着“中国最北点”石碑。"},
+{d:"10/3",date:"2026-10-03",t:"D9 · 塔河→十八站→嘎仙洞→加格达奇",stay:"加格达奇·金马饭店",sun:"06:00",set:"17:15",wake:"07:00",
+ items:[{t:"08:00",n:"十八站鄂伦春民族乡",note:"清代墨尔根-漠河驿道，免费"},
+        {t:"12:30",n:"嘎仙洞+阿里河镇鄂伦春博物馆",note:"拓跋鲜卑石室，国家级文保"},
+        {t:"16:30",n:"加格达奇，晚餐小胖子铁锅炖",note:"2-3人份"}],
+ food:"加格达奇小胖子铁锅炖",cul:"嘎仙洞石壁上的祝文刻石证明了拓跋鲜卑的起源，北魏孝文帝认祖归宗派人来此祭祖；十八站是清代从墨尔根到漠河25个驿站中保存鄂伦春文化的活标本。"},
+{d:"10/4",date:"2026-10-04",t:"D10 · 加格达奇→齐齐哈尔→扎龙",stay:"齐齐哈尔市区",sun:"06:05",set:"17:12",wake:"07:00",
+ items:[{t:"08:00",n:"出发G111南下（出城可选北山公园·铁道兵纪念碑）",note:"全程铺装"},
+        {t:"14:30",n:"齐齐哈尔",note:""},
+        {t:"15:30",n:"扎龙湿地看丹顶鹤",note:"放飞场次行前电话确认"},
+        {t:"18:30",n:"齐市烤肉收官夜",note:"家庭拌肉是本地特色"}],
+ food:"齐齐哈尔烤肉（家庭拌肉）",cul:"扎龙是中国最大的丹顶鹤繁殖地，全球约五分之一的野生丹顶鹤在这里繁衍；齐齐哈尔 therefore 叫“鹤城”，烤肉则是这座重工业城市的全民社交方式。"},
+{d:"10/5",date:"2026-10-05",t:"归 · 齐齐哈尔→哈尔滨→杭州",stay:"到家",sun:"06:10",set:"17:08",wake:"08:00",
+ items:[{t:"10:00",n:"火车站还车（油量按合同）",note:""},
+        {t:"10:30",n:"动车齐齐哈尔→哈尔滨",note:"每日75班随到随走"},
+        {t:"午后",n:"哈尔滨✈杭州",note:""},
+        {t:"晚间",n:"到家",note:"10/10补班一天"}],
+ food:"中央大街早茶补上",cul:""}];
+
+const NODES=[
+ {id:"qiqihar",n:"齐齐哈尔",x:594,y:572,lon:123.92,lat:47.34,day:"D1/D10"},
+ {id:"zhalong",n:"扎龙湿地",x:632,y:584,lon:123.98,lat:47.20,day:"D10"},
+ {id:"zhalantun",n:"扎兰屯",x:499,y:520,lon:122.74,lat:48.00,day:"D1"},
+ {id:"hailar",n:"海拉尔",x:262,y:423,lon:119.74,lat:49.21,day:"D2"},
+ {id:"moergele",n:"莫日格勒河",x:264,y:408,lon:119.83,lat:49.40,day:"D2夜"},
+ {id:"eerguna",n:"额尔古纳",x:295,y:341,lon:120.16,lat:50.24,day:"D3"},
+ {id:"baihua",n:"白桦林",x:308,y:375,lon:120.38,lat:50.41,day:"D3"},
+ {id:"enhe",n:"恩和",x:260,y:316,lon:119.75,lat:50.52,day:"D3"},
+ {id:"linjiang",n:"临江屯",x:240,y:304,lon:119.42,lat:51.03,day:"D3夜/D4晨"},
+ {id:"mordaoga",n:"莫尔道嘎",x:282,y:266,lon:120.85,lat:51.28,day:"D4夜/D5"},
+ {id:"genhe",n:"根河",x:402,y:298,lon:121.52,lat:50.78,day:"D5夜"},
+ {id:"manzhouli",n:"满归(加油)",x:447,y:195,lon:122.35,lat:52.33,day:"D6"},
+ {id:"mohe",n:"漠河市区",x:483,y:122,lon:122.54,lat:52.97,day:"D6夜/D7晨"},
+ {id:"beijicun",n:"北极村",x:468,y:82,lon:122.38,lat:53.48,day:"D7"},
+ {id:"beihong",n:"北红村",x:542,y:76,lon:123.02,lat:53.33,day:"D7夜/D8晨"},
+ {id:"diyiwan",n:"龙江第一湾",x:568,y:70,lon:123.20,lat:53.45,day:"D8"},
+ {id:"tahe",n:"塔河",x:657,y:174,lon:124.71,lat:52.33,day:"D8夜"},
+ {id:"jiagedaqi",n:"加格达奇",x:610,y:326,lon:124.12,lat:50.42,day:"D9夜"},
+ {id:"harbin",n:"哈尔滨",x:802,y:696,lon:126.53,lat:45.80,day:"D0/归"}];
+/* 塔河 124.71,52.33；北红村约123.02,53.33；加格达奇124.12,50.42 */
+
+const GEAR=["厚羽绒服(充绒200g+)","保暖内衣×2套/人","抓绒衣","防风外套","加绒裤×2","羽绒裤(看日出)","抓绒帽+脖套","手套(触屏+厚)","羊毛袜×4","高帮防水徒步鞋","暖宝宝×20","睡衣睡裤","防冻玻璃水(-25℃)","除冰铲","胎压计","拖车绳+搭电线","三脚架(星空/晨雾)","充电宝20000mAh","相机备用电池×2","卫星通信已开通并测试","离线地图已下载","保温杯","自热食品+水+巧克力","常用药包"];
+const DOCS=["身份证(全员)","驾驶证","12367电子边防证(截图)","租车订单","优惠证件(学生/教师/老年)"];
+const OPTS=["防潮野餐垫(草原躺看银河)","睡袋内胆(卫生层)","头灯(夜路+看星)","压缩收纳袋","拍立得(家访破冰)","露营折叠椅","强光手电","望远镜","三脚架手机夹","防滑链(遇雪再买)"];
+
+/* ============ 状态 ============ */
+const LSK="dxal_v1_";
+function load(k,d){try{const v=localStorage.getItem(LSK+k);return v?JSON.parse(v):d}catch(e){return d}}
+function save(k,v){try{localStorage.setItem(LSK+k,JSON.stringify(v))}catch(e){}}
+let DONE=load("done",{});
+let GEO=load("geo",{lat:null,lon:null,ts:null});
+function toggleDone(k){DONE[k]=!DONE[k];if(!DONE[k])delete DONE[k];save("done",DONE);renderAll()}
+function isDone(k){return !!DONE[k]}
+
+/* ============ 工具 ============ */
+function todayStr(){const d=new Date();const m=String(d.getMonth()+1).padStart(2,"0"),dd=String(d.getDate()).padStart(2,"0");return `2026-${m}-${dd}`}
+function toMin(t){const p=t.split(":");return (+p[0])*60+(+p[1])}
+function nowMin(){const d=new Date();return d.getHours()*60+d.getMinutes()}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function amapSearch(kw){return "https://uri.amap.com/search?keyword="+encodeURIComponent(kw)}
+function amapNav(name){return "https://uri.amap.com/search?keyword="+encodeURIComponent(name)}
+function bing(q){return "https://www.bing.com/search?q="+encodeURIComponent(q)}
+function meituan(town){return bing(town+" 美团 美食")}
+function hav(lat1,lon1,lat2,lon2){const R=6371,d=Math.PI/180;const a=Math.sin((lat2-lat1)*d/2)**2+Math.cos(lat1*d)*Math.cos(lat2*d)*Math.sin((lon2-lon1)*d/2)**2;return 2*R*Math.asin(Math.sqrt(a))}
+function dayByDate(ds){return DAYS.find(x=>x.date===ds)}
+function todayIdx(){const i=DAYS.findIndex(x=>x.date===todayStr());return i>=0?i:null}
+
+/* ============ 今日页 ============ */
+function renderToday(){
+  const idx=todayIdx();const nc=document.getElementById("nowcard");
+  let h="";
+  if(idx===null){
+    const st=new Date(TRIP_START),en=new Date(TRIP_END),now=new Date();
+    if(now<st){const dd=Math.ceil((st-now)/864e5);h=`<div class="big">还有 <span class="hl">${dd}</span> 天出发</div><div class="sub">出发日 ${TRIP_START} 10:00 齐齐哈尔火车站取车。行前检查清单在「清单」页。</div>`}
+    else{h=`<div class="big">行程已结束 🌲</div><div class="sub">10/5 已还车。补班日 10/10。下次再会，北纬53°。</div>`}
+    nc.innerHTML=h;document.getElementById("alerts").innerHTML="";renderDay(null);renderStop(null);return;
+  }
+  const day=DAYS[idx];const nm=nowMin();
+  let cur=day.items[0],next=null,allDone=true;
+  day.items.forEach((it,i)=>{if(isDone(`${idx}_${i}`)){cur=day.items[Math.min(i+1,day.items.length-1)]}else{allDone=false}});
+  for(let i=0;i<day.items.length;i++){if(!isDone(`${idx}_${i}`)){next=day.items[i];break}}
+  if(!next)next={t:day.set,n:"今天全部完成，早点休息"};
+  const setMin=toMin(day.set),left=setMin-nm;
+  const timeStr=new Date().toTimeString().slice(0,5);
+  h=`<div class="big">今天：${day.t}</div>
+     <div class="sub">宿：${day.stay}｜日出${day.sun} 日落${day.set}｜建议起床 ${day.wake}</div>
+     <div style="margin-top:8px" class="pill">现在 ${timeStr}</div>
+     <span class="pill ${left>0?'':'b'}">距日落 ${left>0?Math.floor(left/60)+"h"+String(left%60).padStart(2,"0")+"m":"已天黑"}</span>
+     <span class="pill ${allDone?'g':''}">${allDone?"今日已全部完成":"进行中"}</span>`;
+  if(!allDone&&next&&next.n)h+=`<div class="alert">接下来：<b>${next.n}</b>${next.t?("（"+next.t+"）"):""}${next.note?"——"+next.note:""}</div>`;
+  nc.innerHTML=h;
+  // 提示引擎
+  const al=[];
+  if(left>0&&left<=90&&!allDone)al.push(`<div class="alert red">⏰ 距日落仅${Math.floor(left/60)}小时${left%60}分——日落红线17:30，若未到今晚住宿点请立即出发，17:00后降速20%。</div>`);
+  if(idx===5){al.push(`<div class="alert">⛽ 今天满归<b>只加油不停留</b>，出发前务必满油；满归—漠河70–80km无信号（离线地图+卫星消息就绪）。20:00记得报平安。</div>`)}
+  if(idx===6){al.push(`<div class="alert">🌅 明早还有九曲十八弯晨雾★★★——今晚漠河市区早睡，<b>明早5:30起床、6:00出发</b>。</div>`);if(nm>=(idx===6?19*60:0)){}
+  }
+  if(idx===3){al.push(`<div class="alert">🌄 明早<b>5:30起床</b>，日出前40分钟（约5:30）上临江后山占机位——全线最强晨景★★★。</div>`)}
+  if(idx===1){al.push(`<div class="alert">📍 取车：绕车录像+油量拍照+确认随车三角牌；防冻玻璃水(-25℃)提车即换。</div>`)}
+  if(idx===4){al.push(`<div class="alert">⛽ 今天开始执行“见站加满、半箱必加”（莫尔道嘎/金河/满归）。</div>`)}
+  if(idx===9){al.push(`<div class="alert">🦩 扎龙放飞场次行前应已电话确认；下午到齐齐哈尔先去湿地，晚上烤肉收尾。</div>`)}
+  if(!(navigator.onLine!==false))al.push(`<div class="alert red">📡 当前离线：知识库与清单可用，检索/导航按钮需信号恢复后使用。</div>`);
+  if(GEO.lat!==null&&next&&next.n){
+    // 找下一站的坐标做距离估算
+    const cand=NODES.find(n=>next.n.indexOf(n.n)>-1)||NODES.find(n=>day.stay.indexOf(n.n)>-1);
+    if(cand&&GEO.lat){const km=hav(GEO.lat,GEO.lon,cand.lat,cand.lon);al.push(`<div class="alert ok">📍 定位：距「${cand.n}」直线约 <b>${km.toFixed(0)} km</b>${km>80?"（注意长途驾驶节奏，每2小时休息）":""}。</div>`)}
+  }
+  document.getElementById("alerts").innerHTML=al.join("");
+  renderDay(idx);
+  renderStop(idx);
+  renderQuick(idx,day);
+}
+function renderDay(idx){
+  const el=document.getElementById("todaycard");
+  if(idx===null){el.innerHTML="<h3>今日行程</h3><p class='sub'>不在行程日期内。</p>";return}
+  const day=DAYS[idx];
+  let h=`<h3>${day.t}（宿：${day.stay}）</h3>`;
+  h+=`<div class="sub">起床建议 ${day.wake} ｜ 日出${day.sun} 日落${day.set}</div>`;
+  day.items.forEach((it,i)=>{
+    const k=`${idx}_${i}`,on=isDone(k);
+    h+=`<div class="row ${on?'done':''}"><div class="chk ${on?'on':''}" onclick="toggleDone('${k}')">${on?'✓':''}</div><div class="nm"><b>${it.n}</b><span class="note">${it.note||""}</span></div><div class="t">${it.t}</div></div>`;
+  });
+  if(day.alt)h+=`<div class="sub">备选：${day.alt}</div>`;
+  el.innerHTML=h;
+}
+function renderStop(idx){
+  const el=document.getElementById("foodcard"),cu=document.getElementById("culturecard");
+  if(idx===null){el.style.display="none";cu.style.display="none";return}
+  const day=DAYS[idx];
+  el.style.display="";cu.style.display="";
+  const town=day.stay.split("·")[0];
+  el.innerHTML=`<h3>🍽️ 今天吃什么</h3><p>${day.food}</p>
+   <a class="btn" href="${amapSearch(town+" 美食")}" target="_blank">高德搜周边美食</a>
+   <a class="btn ghost" href="${meituan(town)}" target="_blank">点评搜索</a>`;
+  cu.innerHTML=`<h3>📖 这里的人文</h3><p>${day.cul}</p>
+   <a class="btn ghost" href="${bing(town+" 历史 民俗")}" target="_blank">联网查更多典故</a>
+   <a class="btn ghost" href="${bing(town+" 天气")}" target="_blank">天气</a>`;
+}
+function renderQuick(idx,day){
+  const q=document.getElementById("quick");
+  const nextName=(function(){const i=DAYS.indexOf(day);const nx=DAYS[i+1];return nx?nx.stay.split("·")[0]:""})()||"下一站";
+  q.innerHTML=`<a class="btn" href="${amapNav(day.stay.split("·")[0]+" 火车站")}" target="_blank">🧭 导航到今晚住宿</a>
+  <a class="btn" href="${amapNav(nextName)}" target="_blank">🧭 导航到下一站（${nextName}）</a>
+  <a class="btn ghost" href="${bing(day.stay.split("·")[0]+" 景点")}" target="_blank">🔎 周边景点检索</a>`;
+}
+
+/* ============ 行程页 ============ */
+function renderPlan(){
+  const el=document.getElementById("alldays");let h="",tot=0,dn=0;
+  DAYS.forEach((day,di)=>{
+    let done=0;day.items.forEach((it,i)=>{tot++;if(isDone(`${di}_${i}`)){done++;dn++}});
+    const pct=day.items.length?Math.round(done/day.items.length*100):0;
+    h+=`<div class="card"><h3>${day.t} · ${pct}%</h3><div class="prog"><i style="width:${pct}%"></i></div>
+      <div class="sub">宿：${day.stay}</div>`;
+    day.items.forEach((it,i)=>{const k=`${di}_${i}`,on=isDone(k);
+      h+=`<div class="row ${on?'done':''}"><div class="chk ${on?'on':''}" onclick="toggleDone('${k}');renderPlan();renderToday()">${on?'✓':''}</div><div class="nm"><b>${it.n}</b><span class="note">${it.note||""}</span></div><div class="t">${it.t}</div></div>`});
+    h+=`</div>`;
+  });
+  document.getElementById("progall").innerHTML=`<div class="big">总进度 <span class="hl">${tot?Math.round(dn/tot*100):0}%</span>（${dn}/${tot} 项）</div><div class="prog"><i style="width:${tot?dn/tot*100:0}%"></i></div>`;
+  el.innerHTML=h;
+}
+
+/* ============ 地图页 ============ */
+function renderMap(){
+  const g=document.getElementById("mnodes");let h="";
+  NODES.forEach((n,i)=>{
+    const di=parseInt((n.day.match(/D(\d+)/)||[])[1]);
+    const nightDone=di!==undefined&&!isNaN(di)&&!!DAYS[di]&&DAYS[di].items.some((it,j)=>isDone(di+"_"+j));
+    h+=`<g class="node-hit" onclick="nodeTap(${i})">
+      <circle cx="${n.x}" cy="${n.y}" r="13" fill="transparent"></circle>
+      <circle cx="${n.x}" cy="${n.y}" r="${nightDone?6:5}" fill="${nightDone?'#f0a050':'#122a22'}" stroke="#f0a050" stroke-width="2.4"></circle>
+      <text x="${n.x+11}" y="${n.y+5}" font-size="14" fill="#e8e4d8">${n.n}</text></g>`;
+  });
+  g.innerHTML=h;
+}
+function nodeTap(i){
+  const n=NODES[i];const p=document.getElementById("mapinfo");p.style.display="block";
+  const day=DAYS.find(d=>(d.t+n.n).length&&d.stay.indexOf(n.n)>-1)||DAYS.find(d=>JSON.stringify(d.items).indexOf(n.n)>-1);
+  let food=day?day.food:"",cul=day?day.cul:"";
+  p.innerHTML=`<b style="color:#f0a050">${n.n}</b> <span class="sub">（${n.day}）</span><br>${cul?cul+"<br>":""}${food?"🍽️ "+food:""}
+   <div style="margin-top:6px"><a class="btn" href="${amapNav(n.n)}" target="_blank">🧭 高德导航</a>
+   <a class="btn ghost" href="${bing(n.n+" 美食 民俗")}" target="_blank">🔎 联网检索</a></div>`;
+}
+
+/* ============ 清单页 ============ */
+function renderList(){
+  function ul(id,arr,pre){
+    const st=load("list_"+id,{});
+    const el=document.getElementById(id);let h="";
+    arr.forEach((x,i)=>{const on=!!st[i];h+=`<li><div class="row ${on?'done':''}"><div class="chk ${on?'on':''}" onclick="toggleList('${id}',${i})">${on?'✓':''}</div><div class="nm">${x}</div></div></li>`});
+    el.innerHTML=h;
+  }
+  ul("gear",GEAR);ul("docs",DOCS);ul("opts",OPTS);
+}
+function toggleList(id,i){const st=load("list_"+id,{});st[i]=!st[i];save("list_"+id,st);renderList()}
+
+/* ============ 定位 ============ */
+function askGeo(){
+  if(!navigator.geolocation){setGeoHint("此环境不支持定位（请用 Safari 打开线上网址）");return}
+  navigator.geolocation.getCurrentPosition(function(p){
+    GEO={lat:p.coords.latitude,lon:p.coords.longitude,ts:Date.now()};save("geo",GEO);
+    setGeoHint(`定位成功：${p.coords.latitude.toFixed(3)}, ${p.coords.longitude.toFixed(3)}（精度${Math.round(p.coords.accuracy)}m）`);renderToday();
+  },function(e){setGeoHint(e.code===1?"定位权限被拒绝：可在 Safari 设置→本网站→位置 中重新允许":"定位暂时不可用，可用「行程」页手动勾选进度")},{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
+}
+function setGeoHint(t){const el=document.getElementById("geoHint");if(el)el.textContent=t}
+function geoCard(){
+  const el=document.getElementById("nowcard");
+  const gc=document.createElement("div");gc.className="card";gc.style.marginTop="0";
+  gc.innerHTML=`<h3>📍 位置</h3><div class="sub" id="geoHint">${GEO.lat!==null?("最近一次定位："+GEO.lat.toFixed(3)+", "+GEO.lon.toFixed(3)):"尚未获取定位"}</div>
+  <button class="btn" onclick="askGeo()">获取当前位置</button>
+  <span class="sub">首次会弹出权限，请允许「位置」。</span>`;
+  el.parentNode.insertBefore(gc,el.nextSibling);
+}
+
+/* ============ 渲染入口 ============ */
+function renderAll(){renderToday();renderPlan();renderMap();renderList()}
+document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",function(){
+  document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("on"));this.classList.add("on");
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));
+  document.getElementById(this.dataset.p).classList.add("on");window.scrollTo(0,0);
+}));
+function tick(){document.getElementById("clock").textContent=new Date().toTimeString().slice(0,5)}
+setInterval(tick,30000);tick();
+renderAll();geoCard();
+</script>
+</body>
+</html>
