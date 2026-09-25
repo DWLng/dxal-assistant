@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
@@ -393,7 +393,7 @@ document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",
 }));
 function tick(){document.getElementById("clock").textContent=new Date().toTimeString().slice(0,5)}
 setInterval(tick,30000);tick();
-renderAll();geoCard();try{if('serviceWorker' in navigator){navigator.serviceWorker.register('app.sw.js')}}catch(e){}
+renderAll();geoCard();try{if('serviceWorker' in navigator){navigator.serviceWorker.register('dxal.sw.js')}}catch(e){}
 //]]></script>
 </body>
 </html>

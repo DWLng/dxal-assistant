@@ -2,7 +2,7 @@
   "name": "大兴安岭旅行助理",
   "short_name": "旅行助理",
   "description": "大兴安岭全环线自驾10日：行程、导航、夜宿、星空与人文",
-  "start_url": "./app.xhtml",
+  "start_url": "./dxal.xhtml",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
