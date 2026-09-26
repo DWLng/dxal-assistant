@@ -1,6 +1,6 @@
 const CACHE="assistant-v3";
 self.addEventListener("install",e=>{
-  e.waitUntil(caches.open(CACHE).then(c=>c.addAll(["./","./assistant.xhtml","./manifest.webmanifest","./icon-192.png","./icon-512.png"])).then(()=>self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then(c=>c.addAll(["./","./anthropic.xhtml","./manifest.webmanifest","./icon-192.png","./icon-512.png"])).then(()=>self.skipWaiting()));
 });
 self.addEventListener("activate",e=>{
   e.waitUntil(caches.keys().then(ks=>Promise.all(ks.map(k=>{if(k!==CACHE)return caches.delete(k)})).then(()=>self.clients.claim())));

@@ -422,7 +422,7 @@ document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",
 }));
 function tick(){document.getElementById("clock").textContent=new Date().toTimeString().slice(0,5)}
 setInterval(tick,30000);tick();
-renderAll();geoCard();try{if('serviceWorker' in navigator){navigator.serviceWorker.register('assistant.sw.js')}}catch(e){}
+renderAll();geoCard();try{if('serviceWorker' in navigator){navigator.serviceWorker.register('anthropic.sw.js')}}catch(e){}
 var WEATHER_NOW=undefined;
 
 /* ============ AI 随行向导 ============ */
