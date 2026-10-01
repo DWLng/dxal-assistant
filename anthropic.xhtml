@@ -42,8 +42,8 @@ body{font-family:-apple-system,"PingFang SC",sans-serif;background:var(--bg);col
 .alert.red{border-left-color:#B85C3F;background:#F9EAE4}
 .alert.ok{border-left-color:#5E7D5A;background:#EFF2EA}
 .tabs{position:fixed;bottom:0;left:0;right:0;z-index:60;background:#FAF9F5;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom)}
-.tabs button{flex:1;background:none;border:none;color:var(--mut);font-size:11px;padding:8px 0 8px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:inherit}
-.tabs button .ic{font-size:20px;line-height:1}
+.tabs button{flex:1;min-width:0;background:none;border:none;color:var(--mut);font-size:10.5px;padding:8px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:inherit}
+.tabs button .ic{font-size:18px;line-height:1}
 .tabs button.on{color:var(--terra2);font-weight:600}
 .page{display:none}
 .page.on{display:block}
@@ -194,17 +194,23 @@ const DAYS=[
         {t:"15:30",n:"北红村（免票）",note:""},
         {t:"夜里",n:"肉眼银河+火炕夜话",note:"无路灯，出门30米即星空"}],
  food:"北极村简餐；北红村酸菜白肉（牛姐农家院）",cul:"北极村是中国最北的行政村落，找北体系里的“最北”们都是官方认证的地理坐标；北红村比北极村更原始，是真正的地理最北村落。"},
-{d:"10/2",date:"2026-10-02",t:"D8 · 北红村→龙江第一湾→塔河",stay:"塔河县城（休整夜）",sun:"05:55",set:"17:22",wake:"05:45",
- items:[{t:"07:00",n:"北红村炊烟晨雾+早餐",note:""},
-        {t:"09:00",n:"龙江第一湾+乌苏里浅滩",note:"门票+观光车；千级台阶看Ω湾"},
-        {t:"11:30",n:"南下塔河",note:"G111"},
-        {t:"17:30",n:"塔河县城休整",note:"洗衣+好好吃一顿"}],
- food:"塔河县城东北菜",cul:"龙江第一湾是黑龙江在漠江段冲出的Ω形大湾，对岸就是俄罗斯阿穆尔州；乌苏里浅滩立着“中国最北点”石碑。"},
+{d:"10/2",date:"2026-10-02",t:"D8 · 北红村→第一湾→漠河补给→塔河",stay:"塔河县城（休整夜）",sun:"05:55",set:"17:22",wake:"05:45",
+ items:[{t:"06:45",n:"北红村晨雾炊烟+早餐",note:"吃饱，今天正餐之一"},
+        {t:"07:45",n:"出发去龙江第一湾",note:"走岔路不回村"},
+        {t:"08:30",n:"龙江第一湾+乌苏里浅滩",note:"门票+观光车；千级台阶+「中国最北点」石碑，留足2小时"},
+        {t:"12:00",n:"漠河市区：加油加满+午餐简餐",note:"回程必经；饺子快餐30分钟"},
+        {t:"13:00",n:"G111南下约230km",note:"15:00富乐林场工会驿站歇脚（热水简餐）"},
+        {t:"16:30",n:"塔河入住；傍晚栖霞山植物园散步",note:"休整夜：洗衣+正经吃一顿"}],
+ food:"早餐北红村农家院；午餐漠河市区简餐；晚餐塔河县城东北菜/烧烤",cul:"龙江第一湾是黑龙江冲出的Ω形大湾，对岸即俄罗斯阿穆尔州；乌苏里浅滩立着「中国最北点」石碑。"},
 {d:"10/3",date:"2026-10-03",t:"D9 · 塔河→十八站→嘎仙洞→加格达奇",stay:"加格达奇·金马饭店",sun:"06:00",set:"17:15",wake:"07:00",
- items:[{t:"08:00",n:"十八站鄂伦春民族乡",note:"清代墨尔根-漠河驿道，免费"},
-        {t:"12:30",n:"嘎仙洞+阿里河镇鄂伦春博物馆",note:"拓跋鲜卑石室，国家级文保"},
-        {t:"16:30",n:"加格达奇，晚餐小胖子铁锅炖",note:"2-3人份"}],
- food:"加格达奇小胖子铁锅炖",cul:"嘎仙洞石壁上的祝文刻石证明了拓跋鲜卑的起源，北魏孝文帝认祖归宗派人来此祭祖；十八站是清代从墨尔根到漠河25个驿站中保存鄂伦春文化的活标本。"},
+ items:[{t:"07:30",n:"出发G111南下",note:"约1小时到十八站"},
+        {t:"08:30",n:"十八站鄂伦春民族乡",note:"清代墨尔根—漠河驿道第十八站+民族村，约1小时，免费"},
+        {t:"11:30",n:"新林「中国爱情小镇」打卡",note:"北纬52°13′14″，G111沿线新林镇，可选30分钟"},
+        {t:"12:30",n:"新林镇午餐",note:""},
+        {t:"14:30",n:"嘎仙洞+阿里河镇鄂伦春博物馆",note:"拓跋鲜卑石室祝文+鄂伦春史，约2小时；16:30前进景区"},
+        {t:"17:00",n:"北山公园·铁道兵开发大兴安岭纪念碑",note:"日落前登高俯瞰全城"},
+        {t:"18:00",n:"晚餐小胖子铁锅炖",note:"2-3人份"}],
+ food:"午餐新林镇；晚餐加格达奇小胖子铁锅炖",cul:"嘎仙洞石壁祝文刻石证明拓跋鲜卑起源，北魏曾派人来此祭祖；十八站是清代墨尔根—漠河驿道上鄂伦春文化的活标本；北山纪念碑致敬十万铁道兵开发林区。"},
 {d:"10/4",date:"2026-10-04",t:"D10 · 加格达奇→齐齐哈尔→扎龙",stay:"齐齐哈尔市区",sun:"06:05",set:"17:12",wake:"07:00",
  items:[{t:"08:00",n:"出发G111南下（出城可选北山公园·铁道兵纪念碑）",note:"全程铺装"},
         {t:"14:30",n:"齐齐哈尔",note:""},
@@ -293,13 +299,15 @@ function renderToday(){
   // 提示引擎
   const al=[];
   if(left>0&&left<=90&&!allDone)al.push(`<div class="alert red">⏰ 距日落仅${Math.floor(left/60)}小时${left%60}分——日落红线17:30，若未到今晚住宿点请立即出发，17:00后降速20%。</div>`);
-  if(idx===5){al.push(`<div class="alert">⛽ 今天满归<b>只加油不停留</b>，出发前务必满油；满归—漠河70–80km无信号（离线地图+卫星消息就绪）。20:00记得报平安。</div>`)}
-  if(idx===6){al.push(`<div class="alert">🌅 明早还有九曲十八弯晨雾★★★——今晚漠河市区早睡，<b>明早5:30起床、6:00出发</b>。</div>`);if(nm>=(idx===6?19*60:0)){}
+  if(idx===6){al.push(`<div class="alert">⛽ 今天满归<b>只加油不停留</b>，出发前务必满油；满归—漠河70–80km无信号（离线地图+卫星消息就绪）。20:00记得报平安。</div>`)}
+  if(idx===6){al.push(`<div class="alert">🌅 明早还有九曲十八弯晨雾★★★——今晚漠河市区早睡，<b>明早5:30起床、6:00出发</b>。</div>`);
   }
   if(idx===3){al.push(`<div class="alert">🌄 明早<b>5:30起床</b>，日出前40分钟（约5:30）上临江后山占机位——全线最强晨景★★★。</div>`)}
   if(idx===1){al.push(`<div class="alert">📍 取车：绕车录像+油量拍照+确认随车三角牌；防冻玻璃水(-25℃)提车即换。</div>`)}
   if(idx===4){al.push(`<div class="alert">⛽ 今天开始执行“见站加满、半箱必加”（莫尔道嘎/金河/满归）。</div>`)}
-  if(idx===9){al.push(`<div class="alert">🦩 扎龙放飞场次行前应已电话确认；下午到齐齐哈尔先去湿地，晚上烤肉收尾。</div>`)}
+  if(idx===8){al.push(`<div class="alert">📍 今天主菜是<b>龙江第一湾</b>；午饭在<b>漠河市区</b>顺路简餐并把油加满，富乐驿站可垫补。</div>`)}
+  if(idx===9){al.push(`<div class="alert">🛖 今天两个主菜：<b>十八站驿道</b>和<b>嘎仙洞</b>（阿里河镇，16:30前进景区）；傍晚北山公园看日落。</div>`)}
+  if(idx===10){al.push(`<div class="alert">🦩 扎龙放飞场次行前应已电话确认；下午到齐齐哈尔先去湿地，晚上烤肉收尾。</div>`)}
   if(!(navigator.onLine!==false))al.push(`<div class="alert red">📡 当前离线：知识库与清单可用，检索/导航按钮需信号恢复后使用。</div>`);
   if(GEO.lat!==null&&next&&next.n){
     // 找下一站的坐标做距离估算
